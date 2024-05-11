@@ -1,0 +1,46 @@
+@import url("https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;700&display=swap");
+@import './styles/tailwind.css';
+html,
+body,
+#root,
+.app {
+  height: 100%;
+  width: 100%;
+  font-family: "Rubik", sans-serif;
+}
+
+/* CSS cho thanh trượt */
+::-webkit-scrollbar {
+  width: 0px; /* chiều rộng của thanh trượt */
+}
+
+/* CSS cho nút điều hướng lên và xuống */
+::-webkit-scrollbar-button {
+  background: #ccc; /* màu nền của nút */
+}
+
+/* CSS cho track (phần chứa thanh trượt) */
+::-webkit-scrollbar-track {
+  background: #f1f1f1; /* màu nền của track */
+}
+
+/* CSS cho phần chứa đỉnh thanh trượt */
+::-webkit-scrollbar-track-piece {
+  background-color: #fff; /* màu nền của phần chứa đỉnh thanh trượt */
+}
+
+/* CSS cho phần thân thanh trượt */
+::-webkit-scrollbar-thumb {
+  background-color: #888; /* màu nền của thanh trượt */
+  border-radius: 4px; /* bo góc của thanh trượt */
+}
+
+/* CSS cho phần chứa đáy thanh trượt */
+::-webkit-scrollbar-corner {
+  background: transparent; /* màu nền của phần chứa đáy thanh trượt */
+}
+
+/* CSS cho phần resize */
+::-webkit-resizer {
+  background: #ccc; /* màu nền của phần resize */
+}
