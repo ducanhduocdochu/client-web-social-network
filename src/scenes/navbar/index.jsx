@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   Box,
   IconButton,
@@ -9,6 +9,8 @@ import {
   FormControl,
   useTheme,
   useMediaQuery,
+  Badge,
+  Snackbar,
 } from "@mui/material";
 import {
   Search,
@@ -21,15 +23,21 @@ import {
   Close,
 } from "@mui/icons-material";
 import { useDispatch, useSelector } from "react-redux";
-import { setMode, setLogout } from "state";
+import { setMode, setLogout, setNotifications } from "state";
 import { useNavigate } from "react-router-dom";
 import FlexBetween from "components/FlexBetween";
+import NotificationList from "components/NotificationList"
+import { getFetchPost } from "utils/fetchApi";
+import { showToast } from "utils/showToast";
 
 const Navbar = () => {
   const [isMobileMenuToggled, setIsMobileMenuToggled] = useState(false);
+  const [textSearch, setTextSearch] = useState("");
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const user = useSelector((state) => state.user);
+  const token = useSelector((state) => state.token);
+  const notifications = useSelector((state) => state.notifications);
   const isNonMobileScreens = useMediaQuery("(min-width: 1000px)");
 
   const theme = useTheme();
@@ -41,8 +49,64 @@ const Navbar = () => {
 
   const fullName = `${user.user_name}`;
 
+  const [openNoti, setOpenNoti] = useState(false);
+
+  const handleClickNoti = () => {
+    if(openNoti){
+      setOpenNoti(false);
+    } else{
+      setOpenNoti(true);
+    }
+  };
+
+  const handleCloseNoti = (event, reason) => {
+    if (reason === "clickaway") {
+      return;
+    }
+
+    setOpenNoti(false);
+  };
+
+  const handleSearch = () => {
+    navigate(`/search?text_search=${textSearch}`);
+  };
+
+  const getNoti = async () => {
+    const response = await getFetchPost(`noti`, {
+      method: "GET",
+      headers: { "client-id": user.id, authorization: token.accessToken },
+    });
+    const data = await response.json();
+    if (data.code === 500) {
+      showToast("error", "Get noti fail", "Please reload", 3000, dispatch);
+      setTimeout(() => navigate("/"), 3000);
+    }
+    if (data.metadata) {
+      dispatch(setNotifications(data.metadata));
+    }
+  };
+
+  useEffect(() => {
+    getNoti();
+  }, []);
+
+  const snackbarRef = useRef();
+
   return (
     <FlexBetween padding="1rem 6%" backgroundColor={alt}>
+      <Snackbar
+        ref={snackbarRef}
+        open={openNoti}
+        onClose={handleCloseNoti}
+        children={<NotificationList ref={snackbarRef} notifications={notifications}/>}
+        anchorOrigin={{
+          vertical: 'top',
+          horizontal: 'right',
+        }}
+        style={{
+          marginTop: '40px', 
+        }}
+      />
       <FlexBetween gap="1.75rem">
         <Typography
           fontWeight="bold"
@@ -65,8 +129,12 @@ const Navbar = () => {
             gap="3rem"
             padding="0.1rem 1.5rem"
           >
-            <InputBase placeholder="Search..." />
-            <IconButton>
+            <InputBase
+              placeholder="Search..."
+              value={textSearch}
+              onChange={(e) => setTextSearch(e.target.value)}
+            />
+            <IconButton onClick={handleSearch}>
               <Search />
             </IconButton>
           </FlexBetween>
@@ -84,7 +152,11 @@ const Navbar = () => {
             )}
           </IconButton>
           <Message sx={{ fontSize: "25px" }} />
-          <Notifications sx={{ fontSize: "25px" }} />
+          <IconButton onClick={() => handleClickNoti()}>
+            <Badge badgeContent={notifications.length} color="primary">
+              <Notifications sx={{ fontSize: "25px" }} />
+            </Badge>
+          </IconButton>
           <Help sx={{ fontSize: "25px" }} />
           <FormControl variant="standard" value={fullName}>
             <Select
@@ -159,7 +231,11 @@ const Navbar = () => {
               )}
             </IconButton>
             <Message sx={{ fontSize: "25px" }} />
-            <Notifications sx={{ fontSize: "25px" }} />
+            <IconButton onClick={() => handleClickNoti()}>
+              <Badge badgeContent={notifications.length} color="primary">
+                <Notifications sx={{ fontSize: "25px" }} />
+              </Badge>
+            </IconButton>
             <Help sx={{ fontSize: "25px" }} />
             <FormControl variant="standard" value={fullName}>
               <Select

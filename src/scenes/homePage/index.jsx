@@ -6,6 +6,8 @@ import MyPostWidget from "scenes/widgets/MyPostWidget";
 import PostsWidget from "scenes/widgets/PostsWidget";
 import AdvertWidget from "scenes/widgets/AdvertWidget";
 import FriendListWidget from "scenes/widgets/FriendListWidget";
+import FriendRequestListWidget from "scenes/widgets/FriendRequestListWidget";
+
 import { useEffect } from "react";
 
 const HomePage = () => {
@@ -27,8 +29,9 @@ const HomePage = () => {
         gap="0.5rem"
         justifyContent="space-between"
       >
-        <Box flexBasis={isNonMobileScreens ? "26%" : undefined}>
+        <Box flexBasis={isNonMobileScreens ? "26%" : undefined} className="overflow-y-auto max-h-screen">
           <UserWidget userId={id} picturePath={picturePath} />
+          <FriendRequestListWidget userId={id} picturePath={picturePath} />
         </Box>
         <Box
           flexBasis={isNonMobileScreens ? "42%" : undefined}

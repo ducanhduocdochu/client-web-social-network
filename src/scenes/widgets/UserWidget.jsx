@@ -12,9 +12,11 @@ import { useDispatch, useSelector } from "react-redux";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { showToast } from "utils/showToast";
+import { getFetchPost } from "utils/fetchApi";
 
 const UserWidget = ({ userId, picturePath }) => {
   const [user, setUser] = useState(null);
+  const [friendQuantity, setFriendQuantity] = useState(0);
   const { palette } = useTheme();
   const navigate = useNavigate();
   const token = useSelector((state) => state.token);
@@ -24,7 +26,7 @@ const UserWidget = ({ userId, picturePath }) => {
   const dispatch = useDispatch()
 
   const getUser = async () => {
-    const response = await fetch(`http://localhost:3002/v1/api/user/${userId}`, {
+    const response = await getFetchPost(`user/${userId}`, {
     method: "GET",
     headers: { "client-id": userId, "authorization": token.accessToken },
   });
@@ -38,8 +40,19 @@ const UserWidget = ({ userId, picturePath }) => {
     } 
   };
 
+  const getFriends = async () => {
+    const response = await getFetchPost(
+      `friend/${userId}`,
+      {
+        method: "GET",
+      }
+    );
+    const data = await response.json();
+    setFriendQuantity(data.metadata.length)
+  };
   useEffect(() => {
     getUser();
+    getFriends();
   }, []);
 
   if (!user) {
@@ -80,7 +93,7 @@ const UserWidget = ({ userId, picturePath }) => {
             >
               {user_name}
             </Typography>
-            <Typography color={medium}>0 friends</Typography>
+            <Typography color={medium}>{friendQuantity} friends</Typography>
           </Box>
         </FlexBetween>
       </FlexBetween>

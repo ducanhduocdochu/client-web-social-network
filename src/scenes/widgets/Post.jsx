@@ -568,7 +568,7 @@ const Post = ({
             {share_from_user_id && (
               <div className="flex items-center">
                 <ShareSharp />
-                <p
+                <div
                   className={`ml-6 ${
                     palette.mode === "dark" ? "text-white" : "text-[#858585]"
                   }`}
@@ -589,7 +589,7 @@ const Post = ({
                       {share_from_user_name}
                     </Typography>
                   }
-                </p>
+                </div>
               </div>
             )}
 
@@ -986,7 +986,7 @@ const Post = ({
         {share_from_user_id && (
           <div className="flex items-center">
             <ShareSharp />
-            <p
+            <div
               className={`ml-6 ${
                 palette.mode === "dark" ? "text-white" : "text-[#858585]"
               }`}
@@ -1007,7 +1007,7 @@ const Post = ({
                   {share_from_user_name}
                 </Typography>
               }
-            </p>
+            </div>
           </div>
         )}
         {description.length > 500 ? (

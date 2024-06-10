@@ -5,16 +5,16 @@ import Post from "./Post";
 import { getFetchPost } from "utils/fetchApi";
 import { showToast } from "utils/showToast";
 
-const PostsWidget = ({ userId }) => {
+const PostsWidgetUser = ({ userId, isProfile = false }) => {
   const dispatch = useDispatch();
   const posts = useSelector((state) => state.posts);
   const token = useSelector((state) => state.token);
   const {user_name, id} = useSelector((state) => state.user);
 
   const getPosts = async () => {
-    const response = await getFetchPost("post", {
+    const response = await getFetchPost(`post/user/${userId}`, {
       method: "GET",
-      headers: { "client-id": userId, authorization: token.accessToken },
+      headers: { "client-id": id, authorization: token.accessToken },
     });
     const data = await response.json();
     if(data.metadata){
@@ -62,4 +62,4 @@ const PostsWidget = ({ userId }) => {
   );
 };
 
-export default PostsWidget;
+export default PostsWidgetUser;
